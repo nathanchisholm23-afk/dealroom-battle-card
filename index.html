@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DealRoom Battle Card — vs. Datasite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand:    #0278db;
+      --navy:     #00031b;
+      --white:    #ffffff;
+      --ice:      #e3f0ff;
+      --gold:     #FFD578;
+      --gray-50:  #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-400: #94a3b8;
+      --gray-600: #475569;
+      --gray-800: #1e293b;
+      --green:    #16a34a;
+      --green-bg: #f0fdf4;
+      --red:      #dc2626;
+      --red-bg:   #fef2f2;
+      --amber:    #d97706;
+      --amber-bg: #fffbeb;
+      --radius:   10px;
+    }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .no-print { display: none !important; }
+      .page { page-break-inside: avoid; }
+    }
+
+    html { font-size: 14px; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background: var(--gray-100);
+      color: var(--navy);
+      padding: 1.5rem;
+      min-height: 100vh;
+    }
+
+    /* ── CARD SHELL ── */
+    .card {
+      max-width: 1060px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,3,27,0.12);
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--navy);
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(2,120,219,0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 1rem; }
+
+    .logo-mark {
+      width: 38px; height: 38px;
+      background: var(--brand);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-mark svg { width: 20px; height: 20px; }
+
+    .header-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .header-title span { color: var(--brand); }
+
+    .header-sub {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.4);
+      font-weight: 500;
+      margin-top: 0.15rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .header-right { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; justify-content: flex-end; }
+
+    .header-pill {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .pill-win  { background: rgba(22,163,74,0.2);  color: #4ade80; border: 1px solid rgba(22,163,74,0.3); }
+    .pill-lose { background: rgba(220,38,38,0.2);   color: #f87171; border: 1px solid rgba(220,38,38,0.3); }
+    .pill-info { background: rgba(2,120,219,0.2);   color: #60a5fa; border: 1px solid rgba(2,120,219,0.3); }
+
+    /* ── ALERT BANNER ── */
+    .alert {
+      background: var(--amber-bg);
+      border-left: 3px solid var(--amber);
+      padding: 0.7rem 1.5rem;
+      font-size: 0.8rem;
+      color: var(--amber);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* ── BODY GRID ── */
+    .body {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+    }
+
+    .col {
+      padding: 1.4rem 1.5rem;
+      border-right: 1px solid var(--gray-200);
+    }
+
+    .col:last-child { border-right: none; }
+
+    .col-header {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--brand);
+      margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid var(--ice);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .col-header svg { opacity: 0.7; }
+
+    /* ── POSITIONING ── */
+    .pos-statement {
+      background: linear-gradient(135deg, var(--navy) 0%, #001040 100%);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pos-statement::before {
+      content: '';
+      position: absolute;
+      bottom: -20px; right: -20px;
+      width: 100px; height: 100px;
+      background: radial-gradient(circle, rgba(2,120,219,0.3) 0%, transparent 70%);
+    }
+
+    .pos-statement p {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.6;
+      font-weight: 500;
+      position: relative;
+    }
+
+    .pos-statement p strong { color: var(--brand); }
+
+    .mini-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .mini-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--gray-600);
+      line-height: 1.45;
+    }
+
+    .mini-list li .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    .dot-green { background: var(--green); }
+    .dot-red   { background: var(--red); }
+    .dot-blue  { background: var(--brand); }
+    .dot-amber { background: var(--amber); }
+
+    /* ── OBJECTIONS ── */
+    .objection-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .objection-card {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+      cursor: pointer;
+      transition: box-shadow 0.15s ease;
+    }
+
+    .objection-card:hover { box-shadow: 0 2px 12px rgba(2,120,219,0.12); }
+
+    .objection-trigger {
+      background: var(--gray-50);
+      padding: 0.65rem 0.9rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .trigger-label {
+      font-size: 0.63rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--red);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .trigger-text {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gray-800);
+      line-height: 1.4;
+      font-style: italic;
+    }
+
+    .objection-response {
+      background: var(--white);
+      padding: 0.65rem 0.9rem;
+      border-top: 1px solid var(--gray-200);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .response-label {
+      font-size: 0.63rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .response-text {
+      font-size: 0.78rem;
+      color: var(--gray-600);
+      line-height: 1.5;
+    }
+
+    .response-text strong { color: var(--navy); font-weight: 600; }
+
+    /* ── LANDMINES ── */
+    .landmine-list { display: flex; flex-direction: column; gap: 0.55rem; }
+
+    .landmine {
+      background: var(--gray-50);
+      border-left: 3px solid var(--brand);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 0.6rem 0.8rem;
+    }
+
+    .landmine-q {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--navy);
+      line-height: 1.4;
+      margin-bottom: 0.2rem;
+    }
+
+    .landmine-why {
+      font-size: 0.7rem;
+      color: var(--gray-400);
+      font-style: italic;
+      line-height: 1.3;
+    }
+
+    /* ── TRAPS ── */
+    .trap-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem; }
+
+    .trap {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      background: var(--red-bg);
+      border-radius: var(--radius);
+      padding: 0.6rem 0.8rem;
+      font-size: 0.78rem;
+      color: var(--gray-800);
+      line-height: 1.45;
+    }
+
+    .trap-icon { flex-shrink: 0; margin-top: 1px; }
+
+    /* ── WIN/LOSE GRID ── */
+    .win-lose {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    .wl-block { border-radius: var(--radius); padding: 0.85rem; }
+    .wl-win  { background: var(--green-bg); border: 1px solid #bbf7d0; }
+    .wl-lose { background: var(--red-bg);   border: 1px solid #fecaca; }
+
+    .wl-label {
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .wl-win  .wl-label { color: var(--green); }
+    .wl-lose .wl-label { color: var(--red); }
+
+    .wl-items { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
+
+    .wl-items li {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      line-height: 1.4;
+      display: flex;
+      gap: 0.35rem;
+    }
+
+    .wl-items li::before { content: '·'; color: var(--gray-400); }
+
+    /* ── PROOF POINTS ── */
+    .proof-grid { display: flex; flex-direction: column; gap: 0.55rem; margin-top: 0.25rem; }
+
+    .proof-stat {
+      background: linear-gradient(135deg, var(--ice) 0%, rgba(227,240,255,0.4) 100%);
+      border: 1px solid rgba(2,120,219,0.2);
+      border-radius: var(--radius);
+      padding: 0.65rem 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .proof-number {
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: var(--brand);
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .proof-desc {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      line-height: 1.4;
+    }
+
+    .proof-source {
+      font-size: 0.65rem;
+      color: var(--gray-400);
+      font-style: italic;
+    }
+
+    /* ── DISCOVERY QUESTIONS ── */
+    .dq-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .dq {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: var(--radius);
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      font-size: 0.78rem;
+      color: var(--gray-700);
+      line-height: 1.45;
+    }
+
+    .dq-num {
+      width: 18px; height: 18px;
+      background: var(--brand);
+      border-radius: 50%;
+      color: var(--white);
+      font-size: 0.65rem;
+      font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ── QUALIFY SECTION ── */
+    .qualify-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+
+    .qualify-block {
+      border-radius: var(--radius);
+      padding: 0.8rem;
+      border: 1px solid var(--gray-200);
+    }
+
+    .qualify-label {
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .qualify-good .qualify-label { color: var(--green); }
+    .qualify-bad  .qualify-label { color: var(--red); }
+    .qualify-good { background: var(--green-bg); border-color: #bbf7d0; }
+    .qualify-bad  { background: var(--red-bg);   border-color: #fecaca; }
+
+    .qualify-items { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; }
+
+    .qualify-items li {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      line-height: 1.35;
+      display: flex;
+      gap: 0.3rem;
+    }
+
+    .qualify-items li::before { content: '·'; color: var(--gray-400); }
+
+    /* ── FOOTER ── */
+    .card-footer {
+      background: var(--navy);
+      padding: 0.9rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .footer-text {
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.3);
+      font-weight: 500;
+    }
+
+    .footer-text strong { color: rgba(255,255,255,0.6); }
+
+    .footer-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+    .footer-tag {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.35);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── DIVIDERS ── */
+    .section-gap { margin-top: 1rem; }
+
+    /* ── PRINT BUTTON ── */
+    .print-btn {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--brand);
+      color: var(--white);
+      border: none;
+      padding: 0.65rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 4px 16px rgba(2,120,219,0.35);
+      transition: all 0.2s ease;
+      font-family: inherit;
+      z-index: 50;
+    }
+
+    .print-btn:hover {
+      background: #0060b8;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(2,120,219,0.45);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      html { font-size: 13px; }
+      .body { grid-template-columns: 1fr; }
+      .col { border-right: none; border-bottom: 1px solid var(--gray-200); }
+      .col:last-child { border-bottom: none; }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 0.75rem; }
+      .header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .win-lose { grid-template-columns: 1fr; }
+      .qualify-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20" fill="none">
+          <rect x="2" y="2" width="7" height="7" rx="1.5" fill="white"/>
+          <rect x="11" y="2" width="7" height="7" rx="1.5" fill="white" opacity="0.6"/>
+          <rect x="2" y="11" width="7" height="7" rx="1.5" fill="white" opacity="0.6"/>
+          <rect x="11" y="11" width="7" height="7" rx="1.5" fill="white" opacity="0.3"/>
+        </svg>
+      </div>
+      <div>
+        <div class="header-title">DealRoom <span>vs.</span> Datasite</div>
+        <div class="header-sub">Competitive Battle Card · Internal Use Only</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="header-pill pill-win">We win on workflow</span>
+      <span class="header-pill pill-win">We win on price</span>
+      <span class="header-pill pill-lose">They win on brand</span>
+      <span class="header-pill pill-info">Best ICP: Corp Dev VP</span>
+    </div>
+  </div>
+
+  <!-- ALERT -->
+  <div class="alert">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L13 12H1L7 1Z" stroke="#d97706" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 5v3M7 9.5v.5" stroke="#d97706" stroke-width="1.5" stroke-linecap="round"/></svg>
+    Key context: Datasite acquired Ansarada in August 2024. If a prospect uses Ansarada, use this card — same parent company, same pricing concerns.
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- COL 1: POSITIONING + WIN/LOSE + PROOF -->
+    <div class="col">
+      <div class="col-header">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#0278db" stroke-width="1.5"/><path d="M4 6l1.5 1.5L8 4" stroke="#0278db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Positioning
+      </div>
+
+      <div class="pos-statement">
+        <p><strong>Datasite built its brand on sell-side mandates.</strong> Investment banks love it. Corporate development teams pay for it and work around it. DealRoom was built for the buy side — pipeline, diligence, and integration in one place, at a price that doesn't scale with your deal volume.</p>
+      </div>
+
+      <div class="win-lose">
+        <div class="wl-block wl-win">
+          <div class="wl-label">We Win When...</div>
+          <ul class="wl-items">
+            <li>Repeat acquirer doing 3+ deals/year</li>
+            <li>Team is lean, needs to scale without headcount</li>
+            <li>Using Excel + Dropbox + email today</li>
+            <li>Paying per-page or per-seat today</li>
+            <li>Need pipeline → diligence → PMI in one tool</li>
+            <li>Onboarding external advisors &amp; counsel</li>
+          </ul>
+        </div>
+        <div class="wl-block wl-lose">
+          <div class="wl-label">Hard to Win When...</div>
+          <ul class="wl-items">
+            <li>Deal mandated by sell-side bank using Datasite</li>
+            <li>Heavily regulated cross-border transactions</li>
+            <li>Legal team already locked in, switching cost high</li>
+            <li>Procurement is running a formal RFP requiring Fortune 1000 references</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section-gap"></div>
+
+      <div class="col-header">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1l1.2 3.6H11L8 6.8l1.2 3.6L6 8.4l-3.2 2 1.2-3.6L1 4.6h3.8z" stroke="#0278db" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        Proof Points
+      </div>
+
+      <div class="proof-grid">
+        <div class="proof-stat">
+          <div class="proof-number">40+</div>
+          <div>
+            <div class="proof-desc">hours saved per deal on diligence and integration workflows</div>
+          </div>
+        </div>
+        <div class="proof-stat">
+          <div class="proof-number">$25–50K</div>
+          <div>
+            <div class="proof-desc">saved per deal in outside counsel &amp; process costs</div>
+            <div class="proof-source">Cadence Education</div>
+          </div>
+        </div>
+        <div class="proof-stat">
+          <div class="proof-number">33%</div>
+          <div>
+            <div class="proof-desc">reduction in employee time spent on deal administration</div>
+            <div class="proof-source">Recycle Track Systems</div>
+          </div>
+        </div>
+        <div class="proof-stat">
+          <div class="proof-number">$14B</div>
+          <div>
+            <div class="proof-desc">deal managed on DealRoom — replaced multiple legacy vendors</div>
+            <div class="proof-source">Emerson (Assoc. General Counsel)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COL 2: OBJECTION HANDLING -->
+    <div class="col">
+      <div class="col-header">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1C3.24 1 1 3.24 1 6s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 7.5v-3m0-2v-.5" stroke="#0278db" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Objection Handling
+      </div>
+
+      <div class="objection-list">
+
+        <div class="objection-card">
+          <div class="objection-trigger">
+            <span class="trigger-label">Hear</span>
+            <span class="trigger-text">"We already use Datasite."</span>
+          </div>
+          <div class="objection-response">
+            <span class="response-label">Say</span>
+            <span class="response-text">Makes sense — Datasite is the standard for the data room piece. My question is, what are you using for pipeline management and post-merger integration? <strong>Most teams we talk to are running Datasite for the data room and stitching together three other tools around it.</strong> We replace all of that.</span>
+          </div>
+        </div>
+
+        <div class="objection-card">
+          <div class="objection-trigger">
+            <span class="trigger-label">Hear</span>
+            <span class="trigger-text">"Datasite is the industry standard."</span>
+          </div>
+          <div class="objection-response">
+            <span class="response-label">Say</span>
+            <span class="response-text">It is — for sell-side mandates where the bank is running the process. <strong>You're on the buy side. The tools the banks use for managing auctions aren't built for how corp dev teams run acquisitions.</strong> Datasite wasn't designed for pipeline, diligence requests, or PMI. DealRoom was.</span>
+          </div>
+        </div>
+
+        <div class="objection-card">
+          <div class="objection-trigger">
+            <span class="trigger-label">Hear</span>
+            <span class="trigger-text">"Datasite has better security / compliance."</span>
+          </div>
+          <div class="objection-response">
+            <span class="response-label">Say</span>
+            <span class="response-text">Both platforms meet enterprise security standards — 256-bit encryption, role-based permissions, full audit trail. <strong>If you're running cross-border deals with multi-jurisdiction regulatory requirements, Datasite may have an edge there. But if you're doing domestic acquisitions,</strong> the security posture is equivalent and DealRoom gives you the full workflow Datasite can't.</span>
+          </div>
+        </div>
+
+        <div class="objection-card">
+          <div class="objection-trigger">
+            <span class="trigger-label">Hear</span>
+            <span class="trigger-text">"Datasite is what our legal team knows."</span>
+          </div>
+          <div class="objection-response">
+            <span class="response-label">Say</span>
+            <span class="response-text">That's usually the biggest switching cost — and it's real. <strong>Two things worth considering: first, DealRoom is rated easier to learn than Datasite on G2, so ramp is fast. Second, every external party you add to Datasite costs you a seat.</strong> With DealRoom, your counsel, advisors, and sellers are all unlimited. That adds up quickly.</span>
+          </div>
+        </div>
+
+        <div class="objection-card">
+          <div class="objection-trigger">
+            <span class="trigger-label">Hear</span>
+            <span class="trigger-text">"We don't know what Datasite costs but we're used to it."</span>
+          </div>
+          <div class="objection-response">
+            <span class="response-label">Say</span>
+            <span class="response-text">That's actually the issue — Datasite doesn't publish pricing because it's per-page, per-user, and per-MB of storage. <strong>Most teams only find out what they're paying when the invoice comes in after a deal closes.</strong> DealRoom is flat-rate. You know exactly what you're paying regardless of deal size or team size.</span>
+          </div>
+        </div>
+
+        <div class="objection-card">
+          <div class="objection-trigger">
+            <span class="trigger-label">Hear</span>
+            <span class="trigger-text">"Send me something to review."</span>
+          </div>
+          <div class="objection-response">
+            <span class="response-label">Say</span>
+            <span class="response-text">Happy to — but honestly, <strong>DealRoom is a platform that shows better than it reads.</strong> Rather than a PDF, can we do a 20-minute screen share? I'll show you exactly how a deal flows from pipeline to close. If it's not a fit, I'll tell you.</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- COL 3: LANDMINES + TRAPS + DISCOVERY -->
+    <div class="col">
+
+      <div class="col-header">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4" stroke="#0278db" stroke-width="1.4"/><path d="M6 3.5v3l2 1" stroke="#0278db" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Discovery Questions
+      </div>
+
+      <div class="dq-list">
+        <div class="dq">
+          <div class="dq-num">1</div>
+          <span>How many deals are you running concurrently right now — and where does each one live?</span>
+        </div>
+        <div class="dq">
+          <div class="dq-num">2</div>
+          <span>When a deal closes, how does your team hand off from diligence to integration? What gets lost in that transition?</span>
+        </div>
+        <div class="dq">
+          <div class="dq-num">3</div>
+          <span>How do you manage diligence requests today — email threads, shared drives, something else?</span>
+        </div>
+        <div class="dq">
+          <div class="dq-num">4</div>
+          <span>When you add outside counsel or advisors to a deal, how are you handling access and document sharing?</span>
+        </div>
+        <div class="dq">
+          <div class="dq-num">5</div>
+          <span>How long does it take to spin up a new deal workspace today? And how much of that is manual setup?</span>
+        </div>
+        <div class="dq">
+          <div class="dq-num">6</div>
+          <span>When you report deal status to the CFO or board, where does that data come from?</span>
+        </div>
+      </div>
+
+      <div class="section-gap"></div>
+
+      <div class="col-header">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 10L10 2M6 2h4v4" stroke="#0278db" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Landmine Questions
+        <span style="font-size:0.6rem;color:var(--gray-400);font-weight:500;margin-left:0.25rem;">Ask these to expose Datasite gaps</span>
+      </div>
+
+      <div class="landmine-list">
+        <div class="landmine">
+          <div class="landmine-q">"What does your team use for pipeline tracking — is that inside Datasite or somewhere else?"</div>
+          <div class="landmine-why">Datasite has no pipeline module. Forces them to admit they're using another tool.</div>
+        </div>
+        <div class="landmine">
+          <div class="landmine-q">"After a deal closes, do you stay in Datasite for integration or move everything to a different system?"</div>
+          <div class="landmine-why">Datasite has no PMI tools. Exposes the workflow gap immediately.</div>
+        </div>
+        <div class="landmine">
+          <div class="landmine-q">"When you bring in outside counsel or advisors, how do you handle additional user seats in your current tool?"</div>
+          <div class="landmine-why">Surfaces Datasite's per-seat cost pain. Lets the prospect do the math.</div>
+        </div>
+        <div class="landmine">
+          <div class="landmine-q">"Do you know what you paid Datasite on your last deal once storage and page overages were included?"</div>
+          <div class="landmine-why">Most don't. Creates pricing anxiety and opens the conversation to DealRoom's flat-rate model.</div>
+        </div>
+      </div>
+
+      <div class="section-gap"></div>
+
+      <div class="col-header">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L13 12H1L7 1Z" stroke="#0278db" stroke-width="1.3" stroke-linejoin="round"/><path d="M6 5v2M6 8.5v.5" stroke="#0278db" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Never Do This
+      </div>
+
+      <div class="trap-list">
+        <div class="trap">
+          <span class="trap-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#fef2f2"/><path d="M4.5 4.5l5 5M9.5 4.5l-5 5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          <span>Don't say Datasite is bad. Say it's built for a different use case. You never look threatened.</span>
+        </div>
+        <div class="trap">
+          <span class="trap-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#fef2f2"/><path d="M4.5 4.5l5 5M9.5 4.5l-5 5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          <span>Don't lead with price. Lead with workflow gaps. Price becomes the closer, not the opener.</span>
+        </div>
+        <div class="trap">
+          <span class="trap-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#fef2f2"/><path d="M4.5 4.5l5 5M9.5 4.5l-5 5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          <span>Don't claim equal security for highly regulated cross-border deals. Acknowledge Datasite leads there — then reframe around their actual use case.</span>
+        </div>
+        <div class="trap">
+          <span class="trap-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#fef2f2"/><path d="M4.5 4.5l5 5M9.5 4.5l-5 5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          <span>Don't send a PDF when they say "send me something." Push for a 20-minute demo. The product closes; the PDF gets filed.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- QUALIFY SECTION -->
+  <div style="padding: 1.2rem 1.5rem; border-top: 1px solid var(--gray-200); background: var(--gray-50);">
+    <div class="col-header" style="margin-bottom:0.85rem;">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="#0278db" stroke-width="1.4"/><path d="M4 6l1.5 1.5L8 4" stroke="#0278db" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Qualification Signals
+    </div>
+    <div class="qualify-grid">
+      <div class="qualify-block qualify-good">
+        <div class="qualify-label">✓ Push Forward</div>
+        <ul class="qualify-items">
+          <li>3+ acquisitions per year or roll-up strategy</li>
+          <li>Corp Dev team of 2–10 people, lean structure</li>
+          <li>Currently using Excel, SharePoint, or Dropbox</li>
+          <li>Integration is owned internally, not outsourced</li>
+          <li>Paying seat-based or per-page fees today</li>
+          <li>CFO involved and asking about deal ROI/efficiency</li>
+        </ul>
+      </div>
+      <div class="qualify-block qualify-bad">
+        <div class="qualify-label">✗ Pump the Brakes</div>
+        <ul class="qualify-items">
+          <li>Primarily sell-side / running auctions for others</li>
+          <li>Cross-border deals requiring multi-jurisdiction compliance</li>
+          <li>Legal team is the primary buyer and locked into Datasite</li>
+          <li>1 deal every 2–3 years — pricing won't justify the switch</li>
+          <li>Bank or advisor mandating the VDR platform externally</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="card-footer">
+    <div class="footer-text"><strong>DealRoom</strong> · M&A Software Leader for Buyer-Led M&A™ · Internal Sales Enablement</div>
+    <div class="footer-tags">
+      <span class="footer-tag">Corp Dev VP</span>
+      <span class="footer-tag">Integration Director</span>
+      <span class="footer-tag">General Counsel</span>
+      <span class="footer-tag">vs. Datasite</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- PRINT BUTTON -->
+<button class="print-btn no-print" onclick="window.print()">
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="4" width="10" height="7" rx="1" stroke="white" stroke-width="1.4"/><path d="M4 4V2h6v2M4 10h6" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
+  Print / Save PDF
+</button>
+
+</body>
+</html>
